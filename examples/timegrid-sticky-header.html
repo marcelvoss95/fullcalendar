@@ -12,6 +12,7 @@
     var calendar = new FullCalendar.Calendar(calendarEl, {
       height: 'auto', // enough to active sticky headers
       dayMinWidth: 200,
+      allDayCategories: ['all-day', 'A', 'B'],
 
       slotDuration: '00:05:00',
       initialDate: '2020-09-12',
@@ -30,12 +31,25 @@
       events: [
         {
           title: 'All Day Event',
-          start: '2020-09-01',
+          start: '2020-09-09',
+          category: 'A'
         },
         {
           title: 'Long Event',
           start: '2020-09-07',
-          end: '2020-09-10'
+          end: '2020-09-10',
+          category: 'B'
+        },
+        {
+          title: 'Long Event 2',
+          start: '2020-09-06',
+          end: '2020-09-07',
+          category: 'B'
+        },
+        {
+          title: 'Third Event',
+          start: '2020-09-07',
+          end: '2020-09-09'
         },
         {
           groupId: 999,
