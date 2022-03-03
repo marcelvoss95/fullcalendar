@@ -21,6 +21,14 @@ export class DayTimeColsView extends TimeColsView {
     let { props } = this
     let { dateProfile } = props
     let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
+
+    const splitterKeys = {
+      timed: {},
+    };
+
+    options.allDayCategories.forEach((p: any) => splitterKeys[p] = {})
+    this.allDaySplitter.setKeys(splitterKeys)
+
     let splitProps = this.allDaySplitter.splitProps(props)
     let slatMetas = this.buildSlatMetas(
       dateProfile.slotMinTime,
@@ -42,24 +50,34 @@ export class DayTimeColsView extends TimeColsView {
       />
     )
 
-    let allDayContent = (options.allDaySlot !== false) && ((contentArg: ChunkContentCallbackArgs) => (
-      <DayTable
-        {...splitProps.allDay}
-        dateProfile={dateProfile}
-        dayTableModel={dayTableModel}
-        nextDayThreshold={options.nextDayThreshold}
-        tableMinWidth={contentArg.tableMinWidth}
-        colGroupNode={contentArg.tableColGroupNode}
-        renderRowIntro={hasAttachedAxis ? this.renderTableRowAxis : null}
-        showWeekNumbers={false}
-        expandRows={false}
-        headerAlignElRef={this.headerElRef}
-        clientWidth={contentArg.clientWidth}
-        clientHeight={contentArg.clientHeight}
-        forPrint={props.forPrint}
-        {...this.getAllDayMaxEventProps()}
-      />
-    ))
+    let allDayContent = {};
+
+    for (let key of Object.keys(splitProps)) {
+      if (key === 'timed' || !options.allDaySlot) {
+        continue;
+      }
+
+      allDayContent[key] = ((contentArg: ChunkContentCallbackArgs) => {
+        return (
+          <DayTable
+            {...splitProps[key]}
+            dateProfile={dateProfile}
+            dayTableModel={dayTableModel}
+            nextDayThreshold={options.nextDayThreshold}
+            tableMinWidth={contentArg.tableMinWidth}
+            colGroupNode={contentArg.tableColGroupNode}
+            renderRowIntro={hasAttachedAxis ? this.renderTableRowAxis : null}
+            showWeekNumbers={false}
+            expandRows={false}
+            headerAlignElRef={this.headerElRef}
+            clientWidth={contentArg.clientWidth}
+            clientHeight={contentArg.clientHeight}
+            forPrint={props.forPrint}
+            {...this.getAllDayMaxEventProps()}
+          />
+        );
+      })
+    }
 
     let timeGridContent = (contentArg: ChunkContentCallbackArgs) => (
       <DayTimeCols
@@ -92,7 +110,7 @@ export class DayTimeColsView extends TimeColsView {
       )
       : this.renderSimpleLayout(
         headerContent,
-        allDayContent,
+        allDayContent[0],
         timeGridContent,
       )
   }

@@ -6,7 +6,18 @@ import {
 } from '@fullcalendar/common'
 
 export class AllDaySplitter extends Splitter {
+
+  keys: any;
+
+  setKeys(keys: any){
+    this.keys = keys;
+  }
+
   getKeyInfo() {
+    if(this.keys) {
+      return this.keys;
+    }
+
     return {
       allDay: {},
       timed: {},
@@ -30,6 +41,6 @@ export class AllDaySplitter extends Splitter {
       return ['timed', 'allDay']
     }
 
-    return ['allDay']
+    return [eventDef.extendedProps.category || 'all-day'];
   }
 }

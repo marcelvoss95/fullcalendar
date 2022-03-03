@@ -53,6 +53,7 @@ export interface PluginDefInput {
   recurringTypes?: RecurringType<any>[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
   initialView?: string
+  allDayCategories?: string[]
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollGridImpl?: ScrollGridImpl

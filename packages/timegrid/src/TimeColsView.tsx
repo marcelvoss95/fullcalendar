@@ -124,7 +124,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
   renderHScrollLayout(
     headerRowContent: VNode | null,
-    allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
+    allDayContent: any | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     colCnt: number,
     dayMinWidth: number,
@@ -168,37 +168,44 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     if (allDayContent) {
-      sections.push({
-        type: 'body',
-        key: 'all-day',
-        syncRowHeights: true,
-        chunks: [
-          {
-            key: 'axis',
-            rowContent: (contentArg: ChunkContentCallbackArgs) => (
-              <tr role="presentation">
-                {this.renderTableRowAxis(contentArg.rowSyncHeights[0])}
-              </tr>
-            ),
-          },
-          {
-            key: 'cols',
-            content: allDayContent,
-          },
-        ],
-      })
-      sections.push({
-        key: 'all-day-divider',
-        type: 'body',
-        outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr role="presentation" className="fc-scrollgrid-section">
-            <td
-              colSpan={2}
-              className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
-            />
-          </tr>
-        ),
-      })
+
+      if (typeof allDayContent === 'function') {
+        allDayContent = {'all-day': allDayContent}
+      }
+
+      for (const category of Object.keys(allDayContent)) {
+        sections.push({
+          type: 'body',
+          key: 'all-day',
+          syncRowHeights: true,
+          chunks: [
+            {
+              key: 'axis',
+              rowContent: (contentArg: ChunkContentCallbackArgs) => (
+                <tr role="presentation">
+                  {this.renderTableRowAxis(contentArg.rowSyncHeights[0], category)}
+                </tr>
+              ),
+            },
+            {
+              key: 'cols',
+              content: allDayContent[category],
+            },
+          ],
+        })
+        sections.push({
+          key: 'all-day-divider',
+          type: 'body',
+          outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
+            <tr role="presentation" className="fc-scrollgrid-section">
+              <td
+                colSpan={2}
+                className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
+              />
+            </tr>
+          ),
+        })
+      }
     }
 
     let isNowIndicator = context.options.nowIndicator
@@ -373,10 +380,10 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
   // only a one-way height sync. we don't send the axis inner-content height to the DayGrid,
   // but DayGrid still needs to have classNames on inner elements in order to measure.
-  renderTableRowAxis = (rowHeight?: number) => {
+  renderTableRowAxis = (rowHeight?: number, rowText?: string) => {
     let { options, viewApi } = this.context
     let hookProps: AllDayContentArg = {
-      text: options.allDayText,
+      text: rowText || options.allDayText,
       view: viewApi,
     }
 

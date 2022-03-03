@@ -83,9 +83,9 @@ export const BASE_OPTION_REFINERS = {
   dayCellWillUnmount: identity as Identity<WillUnmountHandler<DayCellMountArg>>,
 
   initialView: String,
+  allDayCategories: identity as Identity<String[]>,
   aspectRatio: Number,
   weekends: Boolean,
-
   weekNumberCalculation: identity as Identity<WeekNumberCalculation>,
   weekNumbers: Boolean,
   weekNumberClassNames: identity as Identity<ClassNamesGenerator<WeekNumberContentArg>>,
@@ -262,6 +262,7 @@ export const BASE_OPTION_DEFAULTS = {
   nextDayThreshold: '00:00:00',
   dayHeaders: true,
   initialView: '',
+  allDayCategories: ['all-day'],
   aspectRatio: 1.35,
   headerToolbar: {
     start: 'title',
